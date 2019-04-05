@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from scipy.misc import imread
+#from scipy.misc import imread
 import init_centroids
 import numpy as np
 
@@ -26,13 +26,15 @@ class Centroid:
         return self._assigned_pixels.__contains__(pixel)
 
     def update_location(self, k):
-        sum = 0
+        pixel_sum = 0
+        # sum all pixels
         for pixel in self._assigned_pixels:
-            ### sum all pixels? what are i supposed to sum?
-            sum = sum + pixel
+            pixel_sum = pixel_sum + pixel
 
         # update new location
-        _location = sum / k
+        _location = pixel_sum / k
+
+    #def print_centroid(self):
 
 
 def distance(x1, x2):
@@ -45,6 +47,16 @@ def find_centroid_of_pixel(pixel, centroids):
             return cent
     return None
 
+
+def print_centroids_locations(centroids, iteration):
+    print("iter " + ""+iteration + ":")
+    first = True
+    for cent in centroids:
+        if first:
+            print(" ")
+        else:
+            print(", ")
+        print(cent)
 
 def main():
     path = 'dog.jpeg'
@@ -64,7 +76,7 @@ def main():
         for loc in init_locations:
             centroids.append(Centroid(loc))
 
-        for i in range(0, 10):
+        for i in range(0, 11):
             # one iteration
             for pixel in X:
                 # holds the cent before new assignment
@@ -85,9 +97,7 @@ def main():
             # update centroids location
             for cent in centroids:
                 cent.update_location(k)
-
-
-
+        # finished learning
 
 main()
 
