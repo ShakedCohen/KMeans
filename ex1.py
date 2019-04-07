@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
-#from scipy.misc import imread
+from scipy.misc import imread
+import math
 import init_centroids
 import numpy as np
 
@@ -23,7 +24,10 @@ class Centroid:
         self._assigned_pixels.remove(pixel)
 
     def is_pixel_assigned(self, pixel):
-        return self._assigned_pixels.__contains__(pixel)
+        for curr_pixel in self._assigned_pixels:
+            if curr_pixel is pixel:
+                return True
+        return False
 
     def update_location(self, k):
         pixel_sum = 0
@@ -38,7 +42,7 @@ class Centroid:
 
 
 def distance(x1, x2):
-    return np.sqrt(pow((x1[0] - x2[0]), 2) + pow((x1[1] - x2[1]), 2) + pow((x1[2] - x2[2]), 2), 2)
+    return math.sqrt(pow((x1[0] - x2[0]), 2) + pow((x1[1] - x2[1]), 2) + pow((x1[2] - x2[2]), 2))
 
 
 def find_centroid_of_pixel(pixel, centroids):
@@ -86,12 +90,13 @@ def main():
                 # find closest cent
                 for cent in centroids:
                     curr_dist = distance(cent.get_location(), pixel)
-                    if curr_dist <= curr_dist[1]:
+                    if curr_dist <= curr_min[1]:
                         curr_min = (cent, curr_dist)
                 # curr_min has the min cent and dist
 
-                # remove pixel from old centroid
-                prev_cent.remove_pixel(pixel)
+                # remove pixel from old centroid - if there is a prev
+                if prev_cent is not None:
+                    prev_cent.remove_pixel(pixel)
                 # add pixel to new centroid
                 curr_min[0].add_pixel(pixel)
             # update centroids location
