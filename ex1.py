@@ -29,7 +29,7 @@ class Centroid:
                 return True
         return False
 
-    def update_location(self, k):
+    def update_location(self):
         pixel_sum = 0
         # sum all pixels
         for pixel in self._assigned_pixels:
@@ -37,7 +37,6 @@ class Centroid:
 
         # update new location
         self._location = pixel_sum / self._assigned_pixels.__len__()
-        m = 3
 
 
 def distance(x1, x2):
@@ -106,7 +105,7 @@ def main():
             curr_min[0].add_pixel(pixel)
         # update centroids location
         for cent in centroids:
-            cent.update_location(k)
+            cent.update_location()
         print_centroids_locations(centroids)
     # finished learning
 
