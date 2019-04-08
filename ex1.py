@@ -14,6 +14,9 @@ class Centroid:
         self._assigned_pixels = []
         self._location = init_loc
 
+    def init_assigned_pixels(self):
+        self._assigned_pixels = []
+
     def get_location(self):
         return self._location
 
@@ -58,7 +61,10 @@ def print_centroids_locations(centroids):
             first = False
         else:
             print(", ", end='')
-        print(cent.get_location(), end='')
+        location_to_print = np.floor(cent.get_location()*100)/100
+        #print(location_to_print[0] + ", " + location_to_print[1] + ", " + location_to_print[2], end='')
+        #print("[%s, %s, %s]", location_to_print[0], location_to_print[1], location_to_print[2], end='')
+        print('[{0}, {1}, {2}]'.format(location_to_print[0], location_to_print[1], location_to_print[2]), end='')
     print(flush=True)
 
 
@@ -69,44 +75,47 @@ def main():
     img_size = A_norm.shape
     X = A_norm.reshape(img_size[0] * img_size[1], img_size[2])
 
-    #for j in range(1, 5):
+    for j in range(1, 5):
+        # num of clusters
+        k = pow(2, j)
+        print("k=" + k.__str__() + ":")
+        #k = 2
+        # centroid initialization
+        init_locations = init_centroids.init_centroids(X, k)
+        centroids = []
+        for loc in init_locations:
+            centroids.append(Centroid(loc))
 
-    # num of clusters
-    #k = pow(2, j)
-    k = 2
-    # centroid initialization
-    init_locations = init_centroids.init_centroids(X, k)
-    centroids = []
-    for loc in init_locations:
-        centroids.append(Centroid(loc))
-
-    print("iter 0 :", end='')
-    print_centroids_locations(centroids)
-
-    for i in range(1, 11):
-        print("iter " + "" + i.__str__() + ":", end='')
-        # one iteration
-        for pixel in X:
-            # holds the cent before new assignment
-            prev_cent = find_centroid_of_pixel(pixel, centroids)
-            # will hold the closest cent
-            curr_min = (centroids[0], 100)
-            # find closest cent
-            for cent in centroids:
-                curr_dist = distance(cent.get_location(), pixel)
-                if curr_dist <= curr_min[1]:
-                    curr_min = (cent, curr_dist)
-            # curr_min has the min cent and dist
-
-            # remove pixel from old centroid - if there is a prev
-            if prev_cent is not None:
-                prev_cent.remove_pixel(pixel)
-            # add pixel to new centroid
-            curr_min[0].add_pixel(pixel)
-        # update centroids location
-        for cent in centroids:
-            cent.update_location()
+        print("iter 0:", end='')
         print_centroids_locations(centroids)
+
+        for i in range(1, 11):
+            print("iter " + "" + i.__str__() + ":", end='')
+            # one iteration
+            for cent in centroids:
+                cent.init_assigned_pixels()
+            for pixel in X:
+                # holds the cent before new assignment
+                prev_cent = find_centroid_of_pixel(pixel, centroids)
+                # will hold the closest cent
+                curr_min = (centroids[0], 100)
+                # find closest cent
+                for cent in centroids:
+                    #cent.init_assigned_pixels()
+                    curr_dist = distance(cent.get_location(), pixel)
+                    if curr_dist <= curr_min[1]:
+                        curr_min = (cent, curr_dist)
+                # curr_min has the min cent and dist
+
+                # remove pixel from old centroid - if there is a prev
+                #if prev_cent is not None:
+                    #prev_cent.remove_pixel(pixel)
+                # add pixel to new centroid
+                curr_min[0].add_pixel(pixel)
+            # update centroids location
+            for cent in centroids:
+                cent.update_location()
+            print_centroids_locations(centroids)
     # finished learning
 
 
