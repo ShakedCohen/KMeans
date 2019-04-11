@@ -106,28 +106,55 @@ def main():
             for cent in centroids:
                 cent.init_assigned_pixels()
             for pixel in X:
-                # holds the cent before new assignment
-                prev_cent = find_centroid_of_pixel(pixel, centroids)
                 # will hold the closest cent
                 curr_min = (centroids[0], 100)
                 # find closest cent
                 for cent in centroids:
-                    #cent.init_assigned_pixels()
                     curr_dist = distance(cent.get_location(), pixel)
                     if curr_dist <= curr_min[1]:
                         curr_min = (cent, curr_dist)
                 # curr_min has the min cent and dist
 
-                # remove pixel from old centroid - if there is a prev
-                #if prev_cent is not None:
-                    #prev_cent.remove_pixel(pixel)
                 # add pixel to new centroid
                 curr_min[0].add_pixel(pixel)
             # update centroids location
             for cent in centroids:
                 cent.update_location()
             print_centroids_locations(centroids)
+
+        # displays photo at the end of iteration
+        display_image(X, centroids, img_size)
+
     # finished learning
+
+
+def display_image(X, centroids, img_size):
+    def calcDistance(p1, p2):
+        return math.sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2 + (p1[2] - p2[2]) ** 2)
+
+    array = [c.get_location() for c in centroids]
+    B = []
+    # create the new picture array
+    for pixel in X:
+        smallestDist = calcDistance(pixel, array[0])
+        smallestIndex = 0
+        index = 0
+        # check witch centroid is the closest to the current pixel
+        for centroid in array:
+            dist = calcDistance(pixel, centroid)
+            if smallestDist > dist:
+                smallestDist = dist
+                smallestIndex = index
+            index += 1
+        B.append(array[smallestIndex])
+    B = np.array(B)
+    # plot the image
+    B = B * 255
+    B = B.astype(int)
+    Y = B.reshape(img_size[0], img_size[1], img_size[2])
+    plt.imshow(Y)
+    plt.grid(False)
+    plt.show()
 
 
 main()
