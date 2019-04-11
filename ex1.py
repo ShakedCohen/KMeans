@@ -41,6 +41,19 @@ class Centroid:
         # update new location
         self._location = pixel_sum / self._assigned_pixels.__len__()
 
+    def print_cent(self):
+        cent = self.get_location()
+        if type(cent) == list:
+            cent = np.asarray(cent)
+        if len(cent.shape) == 1:
+            return ' '.join(str(np.floor(100 * cent) / 100).split()).replace('[ ', '[').replace('\n', ' ').replace(' ]',
+                                                                                                                   ']').replace(
+                ' ', ', ')
+        else:
+            return ' '.join(str(np.floor(100 * cent) / 100).split()).replace('[ ', '[').replace('\n', ' ').replace(' ]',
+                                                                                                                   ']').replace(
+                ' ', ', ')[1:-1]
+
 
 def distance(x1, x2):
     return math.sqrt(pow((x1[0] - x2[0]), 2) + pow((x1[1] - x2[1]), 2) + pow((x1[2] - x2[2]), 2))
@@ -61,10 +74,8 @@ def print_centroids_locations(centroids):
             first = False
         else:
             print(", ", end='')
-        location_to_print = np.floor(cent.get_location()*100)/100
-        #print(location_to_print[0] + ", " + location_to_print[1] + ", " + location_to_print[2], end='')
-        #print("[%s, %s, %s]", location_to_print[0], location_to_print[1], location_to_print[2], end='')
-        print('[{0}, {1}, {2}]'.format(location_to_print[0], location_to_print[1], location_to_print[2]), end='')
+        location_to_print = cent.print_cent()
+        print(location_to_print, end='')
     print(flush=True)
 
 
